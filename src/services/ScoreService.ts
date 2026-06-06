@@ -1,4 +1,4 @@
-import { DriveEvent, EventCounts, SafetyRating, DriveSession } from '../types';
+import { DriveEvent, EventCounts, SafetyRating, DriveSession, VehicleType } from '../types';
 import { SCORING } from '../constants/scoring';
 
 export class ScoreService {
@@ -31,6 +31,7 @@ export class ScoreService {
 
   public static buildSessionSummary(
     sessionId: string,
+    vehicleType: VehicleType,
     startTime: number,
     endTime: number,
     events: DriveEvent[],
@@ -39,6 +40,7 @@ export class ScoreService {
     const finalScore = this.computeScore(events);
     return {
       id: sessionId,
+      vehicleType,
       startTime,
       endTime,
       durationMs: endTime - startTime,

@@ -33,14 +33,14 @@ export function getEventLabel(type: EventType): string {
   return labels[type];
 }
 
-export function getEventEmoji(type: EventType): string {
-  const emojis: Record<EventType, string> = {
-    HARSH_BRAKE: '🔴',
-    HARSH_ACCELERATION: '🟠',
-    SHARP_TURN: '🟡',
-    AGGRESSIVE_STEERING: '🟡',
-    EXCESSIVE_MOVEMENT: '🟣',
-    PHONE_HANDLING: '📱',
+export function getEventIconName(type: EventType): any {
+  const icons: Record<EventType, any> = {
+    HARSH_BRAKE: 'alert-circle',
+    HARSH_ACCELERATION: 'speedometer',
+    SHARP_TURN: 'swap-horizontal',
+    AGGRESSIVE_STEERING: 'git-branch',
+    EXCESSIVE_MOVEMENT: 'warning',
+    PHONE_HANDLING: 'phone-portrait',
   };
-  return emojis[type];
+  return icons[type];
 }

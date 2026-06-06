@@ -2,8 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Animated, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { StorageService } from '../services/StorageService';
-import { DriveSession } from '../types';
+import { DriveSession, VehicleType } from '../types';
 import { COLORS, FONTS, RADIUS, SPACING } from '../constants/theme';
 import { useSensors } from '../hooks/useSensors';
 import { StatCard } from '../components/common/StatCard';
@@ -15,6 +16,7 @@ export function HomeScreen() {
   const [lastDrive, setLastDrive] = useState<DriveSession | null>(null);
   const [stats, setStats] = useState({ totalDrives: 0, avgScore: 0 });
   const [loading, setLoading] = useState(true);
+  const [vehicleType, setVehicleType] = useState<VehicleType>('CAR');
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
@@ -60,11 +62,27 @@ export function HomeScreen() {
     </View>
   );
 
+  const renderVehicleOption = (type: VehicleType, iconName: any, label: string) => {
+    const isSelected = vehicleType === type;
+    return (
+      <Pressable
+        style={[styles.vehicleOption, isSelected && styles.vehicleOptionSelected]}
+        onPress={() => setVehicleType(type)}
+      >
+        <MaterialCommunityIcons name={iconName} size={28} color={isSelected ? COLORS.bg : COLORS.primary} />
+        <Text style={[styles.vehicleLabel, isSelected && styles.vehicleLabelSelected]}>{label}</Text>
+      </Pressable>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>🚗 DriveSafe</Text>
+          <View style={styles.titleRow}>
+            <Ionicons name="shield-checkmark" size={28} color={COLORS.primary} style={{marginRight: 8}} />
+            <Text style={styles.title}>DriveSafe</Text>
+          </View>
           <Pressable onPress={() => navigation.navigate('History')} style={styles.historyBtn}>
             <Text style={styles.historyText}>History</Text>
           </Pressable>
@@ -95,14 +113,14 @@ export function HomeScreen() {
               <StatCard label="Avg Score" value={stats.avgScore.toFixed(1)} />
             </View>
 
-            <Animated.View style={[styles.startBtnContainer, { transform: [{ scale: pulseAnim }] }]}>
-              <Pressable
-                style={({ pressed }) => [styles.startBtn, pressed && styles.startBtnPressed]}
-                onPress={() => navigation.navigate('ActiveDrive')}
-              >
-                <Text style={styles.startBtnText}>START DRIVE</Text>
-              </Pressable>
-            </Animated.View>
+            <View style={styles.vehicleSelectorContainer}>
+              <Text style={styles.sectionTitle}>SELECT VEHICLE</Text>
+              <View style={styles.vehicleSelector}>
+                {renderVehicleOption('CAR', 'car', 'Car')}
+                {renderVehicleOption('MOTORCYCLE', 'motorbike', 'Motor')}
+                {renderVehicleOption('BICYCLE', 'bicycle', 'Bike')}
+              </View>
+            </View>
 
             <View style={styles.sensorsContainer}>
               <Text style={styles.sectionTitle}>Sensor Status</Text>
@@ -118,6 +136,14 @@ export function HomeScreen() {
           </>
         )}
       </ScrollView>
+      <Animated.View style={[styles.startBtnContainer, { transform: [{ scale: pulseAnim }] }]}>
+        <Pressable
+          style={({ pressed }) => [styles.startBtn, pressed && styles.startBtnPressed]}
+          onPress={() => navigation.navigate('ActiveDrive', { vehicleType })}
+        >
+          <Text style={styles.startBtnText}>START DRIVE</Text>
+        </Pressable>
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -136,6 +162,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: SPACING.lg,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   title: {
     fontSize: FONTS.sizes.xl,
@@ -181,22 +211,25 @@ const styles = StyleSheet.create({
     marginHorizontal: -SPACING.xs,
   },
   startBtnContainer: {
-    marginVertical: SPACING.xl,
-    alignItems: 'center',
+    width: '100%',
   },
   startBtn: {
     backgroundColor: COLORS.primary,
-    paddingVertical: SPACING.lg,
-    paddingHorizontal: SPACING.xl * 2,
-    borderRadius: RADIUS.full,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.xl + 20,
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: COLORS.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 8,
   },
   startBtnPressed: {
-    opacity: 0.8,
+    opacity: 0.9,
+    backgroundColor: COLORS.primaryDim,
   },
   startBtnText: {
     color: COLORS.bg,
@@ -230,5 +263,36 @@ const styles = StyleSheet.create({
   },
   sensorIcon: {
     fontWeight: 'bold',
+  },
+  vehicleSelectorContainer: {
+    marginBottom: SPACING.xl,
+  },
+  vehicleSelector: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: SPACING.sm,
+  },
+  vehicleOption: {
+    flex: 1,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.cardBorder,
+    borderRadius: RADIUS.md,
+    paddingVertical: SPACING.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  vehicleOptionSelected: {
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
+  },
+  vehicleLabel: {
+    color: COLORS.textSecondary,
+    fontSize: FONTS.sizes.sm,
+    fontWeight: 'bold',
+    marginTop: SPACING.xs,
+  },
+  vehicleLabelSelected: {
+    color: COLORS.bg,
   },
 });

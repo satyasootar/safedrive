@@ -3,13 +3,14 @@ import { View, Text, StyleSheet, ScrollView, Pressable, Animated } from 'react-n
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { DriveSession } from '../types';
+import { Ionicons } from '@expo/vector-icons';
+import { DriveSession, EventType } from '../types';
 import { COLORS, FONTS, RADIUS, SPACING } from '../constants/theme';
 import { ScoreRing } from '../components/common/ScoreRing';
 import { SafetyRatingBadge } from '../components/common/SafetyRatingBadge';
 import { StatCard } from '../components/common/StatCard';
 import { EventBarChart } from '../components/charts/EventBarChart';
-import { formatDuration, getEventLabel, getEventEmoji } from '../utils/formatters';
+import { formatDuration, getEventLabel, getEventIconName } from '../utils/formatters';
 
 export function DriveResultScreen() {
   const navigation = useNavigation<any>();
@@ -90,8 +91,8 @@ export function DriveResultScreen() {
               return (
                 <View key={type} style={styles.logRow}>
                   <View style={styles.logLeft}>
-                    <Text style={styles.logEmoji}>{getEventEmoji(type as any)}</Text>
-                    <Text style={styles.logLabel}>{getEventLabel(type as any)}</Text>
+                    <Ionicons name={getEventIconName(type as EventType)} size={18} color={COLORS.eventColors[type as EventType]} style={styles.logIcon} />
+                    <Text style={styles.logLabel}>{getEventLabel(type as EventType)}</Text>
                   </View>
                   <View style={styles.logRight}>
                     <Text style={styles.logCount}>× {info.count}</Text>
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
   logEmpty: { color: COLORS.success, fontSize: FONTS.sizes.md, textAlign: 'center', paddingVertical: SPACING.sm },
   logRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: SPACING.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: COLORS.cardBorder },
   logLeft: { flexDirection: 'row', alignItems: 'center' },
-  logEmoji: { fontSize: FONTS.sizes.md, marginRight: SPACING.sm },
+  logIcon: { marginRight: SPACING.sm },
   logLabel: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md },
   logRight: { flexDirection: 'row', alignItems: 'center', width: 80, justifyContent: 'space-between' },
   logCount: { color: COLORS.textSecondary, fontSize: FONTS.sizes.md },

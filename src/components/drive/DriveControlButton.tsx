@@ -51,22 +51,22 @@ export function DriveControlButton({ isActive, onPress, style }: DriveControlBut
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingHorizontal: SPACING.md,
   },
   button: {
-    paddingVertical: SPACING.lg,
-    borderRadius: RADIUS.full,
+    paddingTop: SPACING.xl,
+    paddingBottom: SPACING.xl + 20, // Huge hit target + safe area allowance
+    borderTopLeftRadius: RADIUS.xl,
+    borderTopRightRadius: RADIUS.xl,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 8,
   },
   pressed: {
     opacity: 0.8,
-    transform: [{ scale: 0.98 }],
   },
   text: {
     color: COLORS.textPrimary,

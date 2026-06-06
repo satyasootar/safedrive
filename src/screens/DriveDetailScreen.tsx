@@ -8,7 +8,7 @@ import { ScoreRing } from '../components/common/ScoreRing';
 import { SafetyRatingBadge } from '../components/common/SafetyRatingBadge';
 import { StatCard } from '../components/common/StatCard';
 import { EventBarChart } from '../components/charts/EventBarChart';
-import { formatDuration, getEventLabel, getEventEmoji, formatRelativeTimestamp, formatDate } from '../utils/formatters';
+import { formatDuration, getEventLabel, formatRelativeTimestamp, formatDate } from '../utils/formatters';
 
 export function DriveDetailScreen() {
   const navigation = useNavigation<any>();

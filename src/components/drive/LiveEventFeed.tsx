@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { DriveEvent } from '../../types';
 import { COLORS, FONTS, RADIUS, SPACING } from '../../constants/theme';
-import { getEventLabel, getEventEmoji, formatRelativeTimestamp } from '../../utils/formatters';
+import { getEventLabel, getEventIconName, formatRelativeTimestamp } from '../../utils/formatters';
 
 interface LiveEventFeedProps {
   events: DriveEvent[];
@@ -23,7 +24,7 @@ export function LiveEventFeed({ events, driveStartTime }: LiveEventFeedProps) {
     return (
       <View style={styles.row}>
         <View style={styles.left}>
-          <Text style={styles.emoji}>{getEventEmoji(item.type)}</Text>
+          <Ionicons name={getEventIconName(item.type)} size={16} color={COLORS.eventColors[item.type]} style={styles.icon} />
           <Text style={styles.label}>{getEventLabel(item.type)}</Text>
         </View>
         <Text style={styles.time}>{timeStr}</Text>
@@ -77,8 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  emoji: {
-    fontSize: FONTS.sizes.sm,
+  icon: {
     marginRight: SPACING.sm,
   },
   label: {

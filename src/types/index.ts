@@ -17,6 +17,9 @@ export interface SensorSnapshot {
   magnetometer?: Vec3;       // μT (microtesla), optional
 }
 
+// Vehicle profiling
+export type VehicleType = 'CAR' | 'MOTORCYCLE' | 'BICYCLE';
+
 // Detected driving events
 export type EventType =
   | 'HARSH_BRAKE'
@@ -38,6 +41,7 @@ export interface DriveEvent {
 // Driving session
 export interface DriveSession {
   id: string;
+  vehicleType: VehicleType;
   startTime: number;          // Unix ms
   endTime: number;            // Unix ms
   durationMs: number;
@@ -62,9 +66,11 @@ export interface EventCounts {
 // Live drive state (used during active session)
 export interface LiveDriveState {
   isActive: boolean;
+  vehicleType: VehicleType;
   startTime: number | null;
   currentScore: number;
   events: DriveEvent[];
   latestSnapshot: SensorSnapshot | null;
   eventCounts: EventCounts;
+  isHalted: boolean;
 }

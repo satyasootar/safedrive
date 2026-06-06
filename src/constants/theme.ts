@@ -1,9 +1,9 @@
 export const COLORS = {
   // Backgrounds
-  bg:          '#0A0F1E',
-  surface:     '#131A2E',
-  card:        '#1B2540',
-  cardBorder:  '#2A3A5C',
+  bg:          '#F3F4F6',
+  surface:     '#FFFFFF',
+  card:        '#FFFFFF',
+  cardBorder:  '#E5E7EB',
 
   // Brand
   primary:     '#4F8EF7',
@@ -16,9 +16,9 @@ export const COLORS = {
   info:        '#38BDF8',
 
   // Text
-  textPrimary:   '#FFFFFF',
-  textSecondary: '#8B9DC3',
-  textMuted:     '#4B5E8A',
+  textPrimary:   '#111827',
+  textSecondary: '#4B5563',
+  textMuted:     '#9CA3AF',
 
   // Events (for badges and charts)
   eventColors: {
@@ -32,11 +32,11 @@ export const COLORS = {
 
   // Safety rating colors
   ratingColors: {
-    EXCELLENT:  '#34D058',
-    GOOD:       '#86EFAC',
-    FAIR:       '#F0A202',
-    POOR:       '#FF4B4B',
-    DANGEROUS:  '#9F1239',
+    EXCELLENT:  '#16A34A',
+    GOOD:       '#22C55E',
+    FAIR:       '#EAB308',
+    POOR:       '#EF4444',
+    DANGEROUS:  '#B91C1C',
   },
 } as const;
 

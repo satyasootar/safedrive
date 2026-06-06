@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, Alert, Pressable } from 'react-native';
-import { useNavigation, usePreventRemove } from '@react-navigation/native';
+import { useNavigation, useRoute, usePreventRemove } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { useDriveSession } from '../hooks/useDriveSession';
@@ -9,11 +9,15 @@ import { ScoreRing } from '../components/common/ScoreRing';
 import { SensorReadingCard } from '../components/drive/SensorReadingCard';
 import { LiveEventFeed } from '../components/drive/LiveEventFeed';
 import { DriveControlButton } from '../components/drive/DriveControlButton';
+import { VehicleAnimation } from '../components/drive/VehicleAnimation';
 import { formatDuration } from '../utils/formatters';
 import { ScoreService } from '../services/ScoreService';
 
 export function ActiveDriveScreen() {
   const navigation = useNavigation<any>();
+  const route = useRoute<any>();
+  const vehicleType = route.params?.vehicleType || 'CAR';
+  
   const { driveState, elapsed, startDrive, endDrive, cancelDrive } = useDriveSession();
   
   const [shouldPreventRemove, setShouldPreventRemove] = useState(true);
@@ -38,9 +42,9 @@ export function ActiveDriveScreen() {
   });
 
   useEffect(() => {
-    startDrive();
+    startDrive(vehicleType);
     return () => cancelDrive();
-  }, []);
+  }, [vehicleType]);
 
   useEffect(() => {
     if (driveState.events.length > previousEventsLength.current) {
@@ -88,6 +92,15 @@ export function ActiveDriveScreen() {
         </Pressable>
         <Text style={styles.headerTitle}>DRIVING...</Text>
         <View style={styles.placeholder} />
+      </View>
+
+      <View style={styles.animationContainer}>
+        <VehicleAnimation vehicleType={vehicleType} isHalted={driveState.isHalted} />
+        {driveState.isHalted && (
+          <View style={styles.haltedOverlay}>
+            <Text style={styles.haltedText}>VEHICLE HALTED</Text>
+          </View>
+        )}
       </View>
 
       <View style={styles.mainContent}>
@@ -149,6 +162,27 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 60,
   },
+  animationContainer: {
+    height: 100,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.card,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.cardBorder,
+  },
+  haltedOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(243, 244, 246, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  haltedText: {
+    color: COLORS.danger,
+    fontSize: FONTS.sizes.lg,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+  },
   mainContent: {
     flex: 1,
     paddingHorizontal: SPACING.md,
@@ -198,7 +232,6 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   footer: {
-    padding: SPACING.md,
-    paddingBottom: SPACING.xl,
+    width: '100%',
   },
 });
