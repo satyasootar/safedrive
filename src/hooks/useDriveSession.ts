@@ -1,0 +1,127 @@
+import { useState, useRef, useCallback } from 'react';
+import { LiveDriveState, DriveSession } from '../types';
+import { useSensors } from './useSensors';
+import { useEventDetection } from './useEventDetection';
+import { ScoreService } from '../services/ScoreService';
+import { StorageService } from '../services/StorageService';
+import { generateSessionId } from '../utils/sensorUtils';
+import { SCORING } from '../constants/scoring';
+
+export function useDriveSession() {
+  const [driveState, setDriveState] = useState<LiveDriveState>({
+    isActive: false,
+    startTime: null,
+    currentScore: SCORING.INITIAL_SCORE,
+    events: [],
+    latestSnapshot: null,
+    eventCounts: ScoreService.getEventCounts([]),
+  });
+  
+  const [elapsed, setElapsed] = useState(0);
+
+  const { startSensors, stopSensors } = useSensors();
+  const { processSnapshot, resetDetection } = useEventDetection();
+
+  const stateRef = useRef(driveState);
+  stateRef.current = driveState;
+  
+  const elapsedTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const sampleCountRef = useRef(0);
+  
+  // Throttle UI updates to 4Hz (250ms)
+  const lastUiUpdateRef = useRef(0);
+
+  const startDrive = useCallback(async () => {
+    resetDetection();
+    sampleCountRef.current = 0;
+    const now = Date.now();
+    
+    setDriveState({
+      isActive: true,
+      startTime: now,
+      currentScore: SCORING.INITIAL_SCORE,
+      events: [],
+      latestSnapshot: null,
+      eventCounts: ScoreService.getEventCounts([]),
+    });
+    setElapsed(0);
+
+    elapsedTimerRef.current = setInterval(() => {
+      setElapsed(e => e + 1);
+    }, 1000);
+
+    await startSensors((snapshot) => {
+      sampleCountRef.current++;
+      const newEvents = processSnapshot(snapshot);
+      
+      let needsUpdate = false;
+      const currentState = stateRef.current;
+      
+      const updatedEvents = newEvents.length > 0 
+        ? [...currentState.events, ...newEvents]
+        : currentState.events;
+        
+      if (newEvents.length > 0) {
+        needsUpdate = true;
+      }
+      
+      const nowMs = Date.now();
+      if (needsUpdate || nowMs - lastUiUpdateRef.current >= 250) {
+        lastUiUpdateRef.current = nowMs;
+        setDriveState({
+          ...currentState,
+          events: updatedEvents,
+          currentScore: ScoreService.computeScore(updatedEvents),
+          latestSnapshot: snapshot,
+          eventCounts: ScoreService.getEventCounts(updatedEvents)
+        });
+      }
+    });
+  }, [startSensors, processSnapshot, resetDetection]);
+
+  const endDrive = useCallback(async (): Promise<DriveSession> => {
+    stopSensors();
+    if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
+    
+    const endTime = Date.now();
+    const finalState = stateRef.current;
+    
+    const session = ScoreService.buildSessionSummary(
+      generateSessionId(),
+      finalState.startTime || endTime,
+      endTime,
+      finalState.events,
+      sampleCountRef.current
+    );
+    
+    await StorageService.saveSession(session);
+    
+    setDriveState({
+      isActive: false,
+      startTime: null,
+      currentScore: SCORING.INITIAL_SCORE,
+      events: [],
+      latestSnapshot: null,
+      eventCounts: ScoreService.getEventCounts([]),
+    });
+    setElapsed(0);
+    
+    return session;
+  }, [stopSensors]);
+
+  const cancelDrive = useCallback(() => {
+    stopSensors();
+    if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
+    setDriveState({
+      isActive: false,
+      startTime: null,
+      currentScore: SCORING.INITIAL_SCORE,
+      events: [],
+      latestSnapshot: null,
+      eventCounts: ScoreService.getEventCounts([]),
+    });
+    setElapsed(0);
+  }, [stopSensors]);
+
+  return { driveState, elapsed, startDrive, endDrive, cancelDrive };
+}

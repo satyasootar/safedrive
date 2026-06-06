@@ -1,56 +1,60 @@
-# Welcome to your Expo app 👋
+# DriveSafe 🚗
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+DriveSafe is a React Native mobile application built with Expo SDK 55. It uses your device's sensors (Accelerometer, Gyroscope, DeviceMotion, Magnetometer) to analyze your driving behavior in real-time, detect unsafe events, calculate a safety score, and store your driving history.
 
-## Get started
+## Important Note on Emulators (Windows)
+> [!WARNING]  
+> **Physical Device Required for Sensors**  
+> This application relies heavily on hardware sensors (Accelerometer, Gyroscope, Magnetometer, and DeviceMotion) that are **not available** or accurately simulated in standard Android emulators on Windows.  
+> To test the core functionality, you **must** use a physical Android device with the Expo Go app.
 
-1. Install dependencies
+## Features
+- **Real-Time Sensor Monitoring:** Samples sensors at 60Hz and throttles UI updates to 4Hz for performance.
+- **Event Detection:** Detects Harsh Braking, Harsh Acceleration, Sharp Turns, Aggressive Steering, Excessive Movement, and Phone Handling.
+- **Safety Scoring System:** Calculates a live driving score and final safety rating (Excellent, Good, Fair, Poor, Dangerous).
+- **Session History:** Persists driving sessions locally using AsyncStorage for post-drive review.
+- **Haptic Feedback:** Provides physical feedback when unsafe driving events occur.
+- **Beautiful UI:** Custom animations, charting, and detailed session breakdowns.
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
+- **React Native**
+- **Expo SDK 55**
+- **TypeScript**
+- **React Navigation v6**
+- **Expo Sensors** (Hardware access)
+- **AsyncStorage** (Local persistence)
+- **React Native Chart Kit** (Data visualization)
 
-2. Start the app
+## Getting Started
 
-   ```bash
-   npx expo start
-   ```
+### Prerequisites
+- Node.js installed
+- Physical Android device with Expo Go installed
 
-In the output, you'll find options to open the app in a
+### Installation
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+1. Install dependencies:
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Start the Metro bundler:
+```bash
+npx expo start -c
+```
 
-### Other setup steps
+3. Open the Expo Go app on your physical device and scan the QR code to run the app.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Project Structure
+- `/src/components`: Reusable UI elements (badges, buttons, charts)
+- `/src/constants`: Scoring rules, sensor thresholds, theme tokens
+- `/src/hooks`: Custom hooks (`useSensors`, `useEventDetection`, `useDriveSession`)
+- `/src/navigation`: React Navigation setup
+- `/src/screens`: App screens (Home, ActiveDrive, DriveResult, History, DriveDetail)
+- `/src/services`: Core logic (EventDetectionService, ScoreService, StorageService)
+- `/src/types`: TypeScript interfaces
+- `/src/utils`: Helper functions (formatters, math utils)
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Development Notes
+- The app uses `Pressable` for all interactions, avoiding `TouchableOpacity` entirely per project constraints.
+- Sensor processing logic is isolated from React renders using `useRef` and singleton services to ensure high performance without triggering unnecessary re-renders.
