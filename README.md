@@ -2,11 +2,11 @@
 
 A mobile application built with React Native and Expo that monitors, analyzes, and scores driving behavior in real-time. By leveraging native device sensors at high frequencies, the app detects dangerous driving patterns, provides a live telemetry dashboard, and stores detailed historical session data to help users improve their driving habits.
 
+## Demo Video
 
+Watch the app in action:
 
 https://github.com/user-attachments/assets/c4950d8a-39c1-44a5-ab36-9911ab4d0ebc
-
-
 
 ## Features
 
