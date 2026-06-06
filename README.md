@@ -1,4 +1,4 @@
-# Safe Driving Telemetry App
+# Safe Driving App
 
 A mobile application built with React Native and Expo that monitors, analyzes, and scores driving behavior in real-time. By leveraging native device sensors at high frequencies, the app detects dangerous driving patterns, provides a live telemetry dashboard, and stores detailed historical session data to help users improve their driving habits.
 
@@ -26,11 +26,11 @@ A mobile application built with React Native and Expo that monitors, analyzes, a
 ## Screenshots
 
 <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 10px;">
-  <img src="path/to/screenshot1.png" width="18%" />
-  <img src="path/to/screenshot2.png" width="18%" />
-  <img src="path/to/screenshot3.png" width="18%" />
-  <img src="path/to/screenshot4.png" width="18%" />
-  <img src="path/to/screenshot5.png" width="18%" />
+  <img src="assets/screenshots/home.jpg" width="18%" />
+  <img src="assets/screenshots/driving.jpg" width="18%" />
+  <img src="assets/screenshots/drivecomplete.jpg" width="18%" />
+  <img src="assets/screenshots/history1.jpg" width="18%" />
+  <img src="assets/screenshots/history2.jpg" width="18%" />
 </div>
 
 ---
